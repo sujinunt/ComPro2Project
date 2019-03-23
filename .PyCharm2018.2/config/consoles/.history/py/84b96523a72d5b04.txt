@@ -1,0 +1,1 @@
+runfile('C:/Users/Omen/PycharmProjects/PythonAdvanced/template.py', wdir='C:/Users/Omen/PycharmProjects/PythonAdvanced')
