@@ -34,6 +34,7 @@ class SurvivalnowWindow(arcade.Window):
         self.survival_spritegun = ModelSprite('images/surviver_gun.png',
                                                model=self.world.surviver)
         self.total_time = 0.0
+        self.coin=0
         self.zombielist=None
         self.bullet_list = None
 
@@ -64,6 +65,7 @@ class SurvivalnowWindow(arcade.Window):
                     bullet.kill()
                 for zombie in hit_list:
                     zombie.kill()
+                    self.coin+=10
                 if bullet.bottom > self.width or bullet.top < 0 or bullet.right < 0 or bullet.left > self.width:
                     bullet.kill()
 
@@ -79,8 +81,11 @@ class SurvivalnowWindow(arcade.Window):
         self.zombielist.draw()
         minutes = int(self.total_time) // 60
         seconds = int(self.total_time) % 60
-        output = f"Time: {minutes:02d}:{seconds:02d}"
-        arcade.draw_text(output, 10, 370, arcade.color.BLACK, 20)
+        arcade.draw_rectangle_filled(300,380,700,40,arcade.color.BLACK)
+        Time = f"Time: {minutes:02d}:{seconds:02d}"
+        arcade.draw_text(Time, 10, 370, arcade.color.WHITE, 20)
+        Coin = f"Coin: {self.coin}"
+        arcade.draw_text(Coin, 400, 370, arcade.color.WHITE, 20)
 
     def on_key_press(self, key, key_modifiers):
         self.world.on_key_press(key, key_modifiers)
