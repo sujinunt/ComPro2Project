@@ -33,6 +33,10 @@ class SurvivalnowWindow(arcade.Window):
                                       model=self.world.surviver)
         self.survival_spritegun = ModelSprite('images/surviver_gun.png',
                                                model=self.world.surviver)
+        self.survival_sprite_left = ModelSprite('images/surviver_stay_left.png',
+                                               model=self.world.surviver)
+        self.survival_spritegun_left = ModelSprite('images/surviver_gun_left.png',
+                                                  model=self.world.surviver)
         self.total_time = 0.0
         self.coin=0
         self.zombielist=None
@@ -74,9 +78,15 @@ class SurvivalnowWindow(arcade.Window):
         arcade.draw_texture_rectangle(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2,
                                       SCREEN_WIDTH, SCREEN_HEIGHT, self.background)
         if self.world.weapon == 0:
-            self.survival_sprite.draw()
+            if self.world.direction==0:
+                self.survival_sprite.draw()
+            elif self.world.direction==1:
+                self.survival_sprite_left.draw()
         elif self.world.weapon == 1:
-            self.survival_spritegun.draw()
+            if self.world.direction==0:
+                self.survival_spritegun.draw()
+            elif self.world.direction==1:
+                self.survival_spritegun_left.draw()
             self.bullet_list.draw()
         self.zombielist.draw()
         minutes = int(self.total_time) // 60
@@ -97,8 +107,14 @@ class SurvivalnowWindow(arcade.Window):
         # Create a bullet
         if self.world.weapon == 1:
             bullet = arcade.Sprite("images/Bullet.png", 0.8)
-            start_x = self.survival_sprite.center_x
-            start_y = self.survival_sprite.center_y
+            if self.world.direction ==0:
+                self.start_x1 = self.survival_spritegun.center_x
+                self.start_y1 = self.survival_spritegun.center_y
+            elif self.world.direction==1:
+                self.start_x1 = self.survival_spritegun_left.center_x
+                self.start_y1 = self.survival_spritegun_left.center_y
+            start_x = self.start_x1
+            start_y = self.start_y1
             bullet.center_x = start_x
             bullet.center_y = start_y
             dest_x = x

@@ -20,7 +20,6 @@ class Zombie(arcade.Sprite):
             start_y = self.center_y
             dest_x = player_sprite.center_x
             dest_y = player_sprite.center_y
-
             x_diff = dest_x - start_x
             y_diff = dest_y - start_y
             angle = math.atan2(y_diff, x_diff)
@@ -53,6 +52,7 @@ class World:
     def __init__(self, width, height):
         self.width = width
         self.height = height
+        self.direction = 0
         self.weapon = 0 #no weapon
         self.surviver = Surviver(self, 50, 100)
 
@@ -63,8 +63,10 @@ class World:
     def on_key_press(self, key, key_modifiers):
         if key == arcade.key.A:
             self.surviver.vx-=MOVEMENT_SPEED
+            self.direction = 1
         elif key == arcade.key.D:
             self.surviver.vx+=MOVEMENT_SPEED
+            self.direction = 0
         elif key == arcade.key.W:
             self.surviver.vy+=MOVEMENT_SPEED
         elif key == arcade.key.S:
