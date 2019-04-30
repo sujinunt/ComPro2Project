@@ -2,7 +2,7 @@ import arcade.key
 import math
 import random
 MOVEMENT_SPEED = 5
-Zombie_SPEED = 0.7
+Zombie_SPEED = 3
 
 class Model:
     def __init__(self, world, x, y):
@@ -23,7 +23,6 @@ class Zombie(arcade.Sprite):
             x_diff = dest_x - start_x
             y_diff = dest_y - start_y
             angle = math.atan2(y_diff, x_diff)
-
             self.change_x = math.cos(angle) * Zombie_SPEED
             self.change_y = math.sin(angle) * Zombie_SPEED
 
@@ -58,7 +57,6 @@ class World:
 
     def update(self, delta):
         self.surviver.update(delta)
-
 
     def on_key_press(self, key, key_modifiers):
         if key == arcade.key.A:
