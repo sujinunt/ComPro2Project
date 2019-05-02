@@ -2,6 +2,8 @@ import arcade
 import random
 import math
 import models
+import tkinter
+from tkinter import ttk
 from models import World
 from models import Zombie
 
@@ -9,6 +11,7 @@ SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
 SCREEN_TITLE = "Survival now"
 BULLET_SPEED = 10
+username='Unknown'
 # These numbers represent "states" that the game can be in.
 INSTRUCTIONS_PAGE_0 = 0
 INSTRUCTIONS_PAGE_1 = 1
@@ -50,6 +53,7 @@ class SurvivalnowWindow(arcade.Window):
         self.bullet_list = None
         self.potionlist=None
         self.countlevel=1
+        self.countzombiehit=0
         self.level = 1
         #Menu
         self.instructions = []
@@ -69,6 +73,7 @@ class SurvivalnowWindow(arcade.Window):
                                                 model=self.world.surviver)
         self.survival_spritegun_left = ModelSprite('images/surviver_gun_left.png',
                                                    model=self.world.surviver)
+        self.cam=ModelSprite('images/hppotion.png',model=self.world.surviver)
         #---------------------------------------------------------------------------
         """Time set sec"""
         self.total_time=10
@@ -76,6 +81,7 @@ class SurvivalnowWindow(arcade.Window):
         self.zombielist = arcade.SpriteList()
         self.bullet_list = arcade.SpriteList()
         self.potionlist=arcade.SpriteList()
+        self.countzombiehit = 0
         #level-------------------------------------
         if (self.countlevel % 2) == 0:
             self.total_time+=10*(self.level)
@@ -195,7 +201,8 @@ class SurvivalnowWindow(arcade.Window):
                         if hitplayerleftgun is True:
                             self.hp += 10
                             potion.kill()
-            # -----------------------------
+            # ----------------------------------------
+
             #Bullet--------------------------------------
             self.bullet_list.update()
             if self.world.weapon == 1 and self.ammo>0:
@@ -205,26 +212,30 @@ class SurvivalnowWindow(arcade.Window):
                         bullet.kill()
                         self.ammo-=1
                     for zombie in hit_list:
-                        zombie.kill()
-                        self.coin+=10
-                        drop_potion = random.randint(0,10)
-                        if drop_potion==3 or drop_potion ==7:
-                            potion = arcade.Sprite("images/hppotion.png")
-                            potion.set_position(zombie.center_x,zombie.center_y)
-                            self.potionlist.append(potion)
-                        zombie = Zombie("images/Zombie_stay.png", 1)
-                        randomLeftorRight=random.randint(0,1)
-                        No_place_zombie = False
-                        while not No_place_zombie:
-                            if randomLeftorRight == 0:
-                                zombie.center_x = random.randint(1000, 5000)
-                            elif randomLeftorRight == 1:
-                                zombie.center_x = random.randint(-3000, -200)
-                            zombie.center_y = random.randint(0, SCREEN_HEIGHT)
-                            zombie_hit_list = arcade.check_for_collision_with_list(zombie, self.zombielist)
-                            if len(zombie_hit_list) == 0:
-                                No_place_zombie = True
-                        self.zombielist.append(zombie)
+                        if self.countzombiehit==2:
+                            zombie.kill()
+                            self.coin+=10
+                            drop_potion = random.randint(0,10)
+                            if drop_potion==3 or drop_potion ==7:
+                                potion = arcade.Sprite("images/hppotion.png")
+                                potion.set_position(zombie.center_x,zombie.center_y)
+                                self.potionlist.append(potion)
+                            zombie = Zombie("images/Zombie_stay.png", 1)
+                            randomLeftorRight=random.randint(0,1)
+                            No_place_zombie = False
+                            while not No_place_zombie:
+                                if randomLeftorRight == 0:
+                                    zombie.center_x = random.randint(1000, 5000)
+                                elif randomLeftorRight == 1:
+                                    zombie.center_x = random.randint(-3000, -200)
+                                zombie.center_y = random.randint(0, SCREEN_HEIGHT)
+                                zombie_hit_list = arcade.check_for_collision_with_list(zombie, self.zombielist)
+                                if len(zombie_hit_list) == 0:
+                                    No_place_zombie = True
+                            self.zombielist.append(zombie)
+                            self.countzombiehit = 0
+                        else:
+                            self.countzombiehit+=1
                     if bullet.bottom > self.width or bullet.top < 0 or bullet.right < 0 or bullet.left > self.width:
                         bullet.kill()
                         self.ammo-=1
@@ -233,6 +244,7 @@ class SurvivalnowWindow(arcade.Window):
     def draw_game(self):
         arcade.draw_texture_rectangle(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2,
                                       SCREEN_WIDTH, SCREEN_HEIGHT, self.background)
+        self.cam.draw()
         #Character----------------------------------------
         if self.world.weapon == 0:
             if self.world.direction==0:
@@ -251,10 +263,10 @@ class SurvivalnowWindow(arcade.Window):
         # Interface----------------------
         minutes = int(self.total_time) // 60
         seconds = int(self.total_time) % 60
-        arcade.draw_rectangle_outline(50,SCREEN_HEIGHT-585,100,20,arcade.color.BLACK)
+        arcade.draw_rectangle_outline(self.cam.center_x+8,self.cam.center_y+70,100,15,arcade.color.BLACK)
         hp = f"HP:{self.hp:.0f}"
-        arcade.draw_rectangle_filled(50,SCREEN_HEIGHT-585,self.hp,20,arcade.color.RED)
-        arcade.draw_text(hp,10,SCREEN_HEIGHT-590,arcade.color.BLACK)
+        arcade.draw_rectangle_filled(self.cam.center_x+8,self.cam.center_y+70,self.hp,15,arcade.color.RED)
+        arcade.draw_text(hp,self.cam.center_x-40,self.cam.center_y+65,arcade.color.BLACK)
         arcade.draw_rectangle_filled(SCREEN_WIDTH-SCREEN_HEIGHT,SCREEN_HEIGHT-20,SCREEN_HEIGHT*2,40,arcade.color.BLACK)
         Time = f"Time: {minutes:02d}:{seconds:02d}|Level:{self.level}"
         arcade.draw_text(Time, 10, SCREEN_HEIGHT-30, arcade.color.WHITE, 20)
@@ -337,5 +349,5 @@ class SurvivalnowWindow(arcade.Window):
 
 
 if __name__ == '__main__':
-    window = SurvivalnowWindow(SCREEN_WIDTH, SCREEN_HEIGHT,SCREEN_TITLE)
+    window = SurvivalnowWindow(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
     arcade.run()
