@@ -2,8 +2,6 @@ import arcade
 import random
 import math
 import models
-import tkinter
-from tkinter import ttk
 from models import World
 from models import Zombie
 
@@ -11,7 +9,6 @@ SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
 SCREEN_TITLE = "Survival now"
 BULLET_SPEED = 10
-username='Unknown'
 # These numbers represent "states" that the game can be in.
 INSTRUCTIONS_PAGE_0 = 0
 INSTRUCTIONS_PAGE_1 = 1
@@ -85,7 +82,7 @@ class SurvivalnowWindow(arcade.Window):
         #level-------------------------------------
         if (self.countlevel % 2) == 0:
             self.total_time+=10*(self.level)
-            self.ammo+=10
+            self.ammo+=int(self.Lasttime)
             models.Zombie_SPEED+=1
         elif self.countlevel==1:
             self.hp = 100
@@ -131,7 +128,7 @@ class SurvivalnowWindow(arcade.Window):
     def draw_Win(self):
         output = "You Survive!"
         arcade.draw_text(output, 240, 400, arcade.color.WHITE, 54)
-        reward = f"Reward: Ammo+10"
+        reward = f"Reward: Ammo+{self.Lasttime:.0f}"
         arcade.draw_text(reward, 260, 350, arcade.color.WHITE, 24)
         output = "Click to go to the next level"
         arcade.draw_text(output, 230, 300, arcade.color.WHITE, 24)
@@ -146,29 +143,30 @@ class SurvivalnowWindow(arcade.Window):
             if self.world.weapon==0:
                 self.hp+=0.1
             #zombie-----------------------------------------
+            damage=0.2
             for zombie in self.zombielist:
                 if self.world.weapon == 0:
                     if self.world.direction == 0:
                         zombie.follow_sprite(self.survival_sprite)
                         hitplayerright = self.survival_sprite.hit(zombie)
                         if hitplayerright is True:
-                            self.hp -= 0.7
+                            self.hp -= damage
                     elif self.world.direction == 1:
                         zombie.follow_sprite(self.survival_sprite_left)
                         hitplayerleft = self.survival_sprite_left.hit(zombie)
                         if hitplayerleft is True:
-                            self.hp -= 0.7
+                            self.hp -= damage
                 elif self.world.weapon == 1:
                     if self.world.direction == 0:
                         zombie.follow_sprite(self.survival_spritegun)
                         hitplayerrightgun = self.survival_spritegun.hit(zombie)
                         if hitplayerrightgun is True:
-                            self.hp -= 0.7
+                            self.hp -= damage
                     elif self.world.direction == 1:
                         zombie.follow_sprite(self.survival_spritegun_left)
                         hitplayerleftgun = self.survival_spritegun_left.hit(zombie)
                         if hitplayerleftgun is True:
-                            self.hp -= 0.7
+                            self.hp -= damage
             #-----------------------------------------------------------
             #Character-------------------------------
             if self.hp<=0:#dead
