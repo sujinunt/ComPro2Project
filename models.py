@@ -27,7 +27,6 @@ class Zombie(arcade.Sprite):
             self.change_y = math.sin(angle) * Zombie_SPEED
 
 
-
 class Surviver(Model):
     def __init__(self, world, x, y):
         super().__init__(world, x, y)
@@ -69,10 +68,12 @@ class World:
             self.surviver.vy+=MOVEMENT_SPEED
         elif key == arcade.key.S:
             self.surviver.vy-=MOVEMENT_SPEED
-        elif key == arcade.key.F:
-            self.weapon = 1
-        elif key == arcade.key.E:
-            self.weapon=0
+        if self.weapon==0:
+            if key == arcade.key.F:
+                self.weapon = 1
+        elif self.weapon==1:
+            if key == arcade.key.F:
+                self.weapon=0
 
     def on_key_release(self, key, modifiers):
         if key == arcade.key.A or key == arcade.key.D:

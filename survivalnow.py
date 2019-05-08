@@ -15,6 +15,7 @@ INSTRUCTIONS_PAGE_1 = 1
 GAME_RUNNING = 2
 GAME_OVER = 3
 win = 4
+pause=5
 
 
 class ModelSprite(arcade.Sprite):
@@ -131,6 +132,12 @@ class SurvivalnowWindow(arcade.Window):
         reward = f"Reward: Ammo+{self.Lasttime:.0f}"
         arcade.draw_text(reward, 260, 350, arcade.color.WHITE, 24)
         output = "Click to go to the next level"
+        arcade.draw_text(output, 230, 300, arcade.color.WHITE, 24)
+
+    def draw_pause(self):
+        output = "Pause!"
+        arcade.draw_text(output, 240, 400, arcade.color.WHITE, 54)
+        output = "Click to continue"
         arcade.draw_text(output, 230, 300, arcade.color.WHITE, 24)
 
     def update(self, delta):
@@ -286,6 +293,9 @@ class SurvivalnowWindow(arcade.Window):
         elif self.current_state==win:
             self.draw_game()
             self.draw_Win()
+        elif self.current_state==pause:
+            self.draw_game()
+            self.draw_pause()
         else:
             self.draw_game()
             self.draw_game_over()
@@ -296,6 +306,8 @@ class SurvivalnowWindow(arcade.Window):
             if key==arcade.key.R and self.coin>=200:
                 self.ammo+=10
                 self.coin-=200
+            if key == arcade.key.SPACE:
+                self.current_state=pause
 
     def on_key_release(self, key, key_modifiers):
         if self.current_state == GAME_RUNNING:
@@ -321,6 +333,9 @@ class SurvivalnowWindow(arcade.Window):
             self.countlevel=2
             self.setup()
             self.current_state = GAME_RUNNING
+        elif self.current_state==pause:
+            self.current_state=GAME_RUNNING
+
         # Create a bullet
         if self.current_state == GAME_RUNNING:
             if self.world.weapon == 1 and self.ammo>0:
