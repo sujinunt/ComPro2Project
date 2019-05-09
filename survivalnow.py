@@ -2,6 +2,7 @@ import arcade
 import random
 import math
 import models
+import pyglet
 from models import World
 from models import Zombie
 
@@ -302,13 +303,16 @@ class SurvivalnowWindow(arcade.Window):
 
     def on_key_press(self, key, key_modifiers):
         if self.current_state == GAME_RUNNING:
-            self.world.on_key_press(key, key_modifiers)
-            if key==arcade.key.R and self.coin>=200:
-                self.ammo+=10
-                self.coin-=200
             if key == arcade.key.SPACE:
                 self.current_state=pause
-
+            self.world.on_key_press(key, key_modifiers)
+            if key==arcade.key.R and self.coin>=100:
+                self.ammo+=10
+                self.coin-=100
+        elif self.current_state==pause:
+            if key == arcade.key.SPACE:
+                self.current_state=GAME_RUNNING
+            
     def on_key_release(self, key, key_modifiers):
         if self.current_state == GAME_RUNNING:
             self.world.on_key_release(key,key_modifiers)
@@ -363,4 +367,6 @@ class SurvivalnowWindow(arcade.Window):
 
 if __name__ == '__main__':
     window = SurvivalnowWindow(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
+    icon=pyglet.image.load('icon.ico')
+    window.set_icon(icon)
     arcade.run()
